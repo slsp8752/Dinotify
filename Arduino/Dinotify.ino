@@ -46,6 +46,7 @@ void setup() {
     WiFiManager wifiManager;
     wifiManager.autoConnect("Dinotify","dinodinodino");
     WiFi.mode(WIFI_AP_STA);
+    digitalWrite(LED_PIN, HIGH);
     server.begin();
 }
 
@@ -60,7 +61,7 @@ void loop() {
         inData += received;
 
         if(received == '\n'){
-          if(inData == "On\n"){
+          if(inData == "On"){
             analogWrite(R_PIN, red);
             analogWrite(G_PIN, green);
             analogWrite(B_PIN, blue);
@@ -89,14 +90,19 @@ void loop() {
               client.print(green);
               client.println(blue);
             }
+           
             else{
               client.println("Invalid Color.");
+              analogWrite(R_PIN, red);
+              analogWrite(G_PIN, green);
+              analogWrite(B_PIN, blue);
             }
             
           }
           
           else{
-            client.println("Invalid Command");
+            client.println("Invalid Command:" + inData);
+            
           }
           inData = "";
         }
