@@ -16,10 +16,14 @@
 	<script type="text/javascript">
 		window.onload = function() {
 			var startLink = document.getElementById("start");
+			console.log("Trying GET to 192.168.4.1");
+			var macGet = httpGetAsync("http://192.168.4.1/i?", function(response){console.log(response);});
+			exponentialBackoff(function(){ return httpGetAsync("http://192.168.4.1/i?", function(response){console.log(response);})}, 5, 100, function(result){
+				console.log("We Got:", result);
+			});
+
 			startLink.onclick = function(){
-				console.log("Getting ESP8266 Info");
-				httpGetAsync("http://192.168.4.1/i?", function(response){console.log(response);});	
-			}
+							}
 		}
 	</script>
   </head>
