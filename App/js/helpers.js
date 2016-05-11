@@ -23,14 +23,28 @@ function httpGetAsync(theUrl, callback)
 }
 
 //Exponential backoff for the GET request, in case the ESP isn't connected/the user isn't connected to the ESP's access point
-function exponentialBackoff(toTry, max, delay, callback) {
-    var result = toTry();
+function getBackoff(url, max, delay, callback) {
+	var result;
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+			var resp = strip(xmlHttp.responseText);
+			var MACre = /Soft AP MAC(.*)Station/;
+			var reArray = MACre.exec(resp); 
+			if(reArray != null) var reResult = reArray[1]; 
+			var result = reResult;
+            //callback(reResult);
+			//return true;
+    }
+    xmlHttp.open("GET", url, true); // true for asynchronous 
+    xmlHttp.send(null);
     if (result != undefined) {
         callback(result);
     } else {
         if (max > 0) {
+			console.log("Max is", max);
             setTimeout(function() {
-                exponentialBackoff(toTry, --max, delay * 2, callback);
+                getBackoff(url, --max, delay * 2, callback);
             }, delay);
 
         } else {

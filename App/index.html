@@ -17,11 +17,9 @@
 		window.onload = function() {
 			var startLink = document.getElementById("start");
 			console.log("Trying GET to 192.168.4.1");
-			var macGet = httpGetAsync("http://192.168.4.1/i?", function(response){console.log(response);});
-			exponentialBackoff(function(){ return httpGetAsync("http://192.168.4.1/i?", function(response){console.log(response);})}, 5, 100, function(result){
-				console.log("We Got:", result);
+			var macGet = getBackoff("http://192.168.4.1/i?", 10, 100, function(result){
+				console.log("We got:", result);
 			});
-
 			startLink.onclick = function(){
 							}
 		}
