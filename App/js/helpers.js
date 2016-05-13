@@ -5,6 +5,30 @@ function strip(html)
    return tmp.textContent || tmp.innerText || "";
 }
 
+function buttonSwitch(){
+	var verButton = document.getElementById("verifyButton");
+	var statusMessage = document.getElementById("statusText");
+	statusMessage.innerHTML = "Looking for your ESP8266... Please Wait.";
+	verButton.disabled = true;
+	verButton.value = "Searching";
+	getBackoff("http://192.168.4.1/i?", 6, 100, function(result){
+		console.log("We got:", result);
+		if(result == false){
+				
+			verButton.disabled = false;
+			verButton.firstChild.data = "Retry";
+			statusMessage.innerHTML = "We could not find your ESP8266. Please make sure that it is connected and that you are connected to its access point. Click the button below to retry.";
+			verButton.onclick = function(){ buttonSwitch(); }; 
+		}
+		else{
+			verButton.disabled = false;
+			verButton.firstChild.data = "Continue";
+			statusMessage.innerHTML = "We found your ESP8266! Its MAC address is " + result + " Click the button below to connect your ESP8266 to the internet!";
+
+			verButton.onclick = function(){ console.log("Continue to Setup"); };
+		}
+	});
+}
 //Exponential backoff for the GET request, in case the ESP isn't connected/the user isn't connected to the ESP's access point
 
 var getDone = false;
